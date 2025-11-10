@@ -5,10 +5,10 @@
     let currentStationIndex = 0; // Start with first station (Chillhop)
 
     const stations = [
-        '5yx6BWlEVcY',   // Chillhop Radio - Jazzy & Lofi Hip Hop Beats
+        //'5yx6BWlEVcY',   // Chillhop Radio - Jazzy & Lofi Hip Hop Beats
         'gFbs586qdbc',   // Lofi beats chill hip hop/ Lofi Hip Hop Beats to Relax & Study to (Chill Beats) Study Music Lofi
-        'jfKfPfyJRdk',   // Lofi Girl Radio
-        '4xDzrJKXOOY',   // synthwave radio 🌌 beats to chill/game to
+        //'jfKfPfyJRdk',   // Lofi Girl Radio
+        //'4xDzrJKXOOY',   // synthwave radio 🌌 beats to chill/game to
         '0w80F8FffQ4',   // Zero Distraction - Coding Music
         'tXB7odE1HuA',   // Cosmic Hippo | Coding Session
         'oM_OFNmkt5A',   // Vibe Coding Music – Stay Focused, No Distractions Mix

@@ -5,16 +5,79 @@
     let isRunning = false;
     let isPaused = false;
 
-    function setDuration() {
-        const select = document.getElementById('sessionType');
-        if (!select) {
-            console.warn('Session type select not found; using default duration.');
-            return;
+    function saveState() {
+        localStorage.setItem('initialTime', initialTime.toString());
+        localStorage.setItem('timeLeft', timeLeft.toString());
+        localStorage.setItem('isRunning', isRunning.toString());
+        localStorage.setItem('isPaused', isPaused.toString());
+        if (isRunning) {
+            const endTime = Date.now() + timeLeft * 1000;
+            localStorage.setItem('endTime', endTime.toString());
+        } else {
+            localStorage.removeItem('endTime');
         }
-        initialTime = parseInt(select.value);
-        if (!isRunning && !isPaused) {
+    }
+
+    function loadState() {
+        const savedInitialTime = localStorage.getItem('initialTime');
+        if (savedInitialTime) {
+            initialTime = parseInt(savedInitialTime);
+        }
+
+        const savedIsRunning = localStorage.getItem('isRunning') === 'true';
+        const savedIsPaused = localStorage.getItem('isPaused') === 'true';
+        const endTimeStr = localStorage.getItem('endTime');
+        const endTime = endTimeStr ? parseInt(endTimeStr) : null;
+
+        isRunning = savedIsRunning;
+        isPaused = savedIsPaused;
+
+        // Set the radio button based on saved initialTime
+        const radios = document.querySelectorAll('input[name="sessionType"]');
+        radios.forEach(r => {
+            if (parseInt(r.value) === initialTime) {
+                r.checked = true;
+            }
+        });
+
+        // Set timeLeft based on state
+        if (isRunning && endTime) {
+            const now = Date.now();
+            timeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
+            updateTimer();
+            if (timeLeft > 0) {
+                // Resume the running timer
+                startTimer();
+                return;
+            } else {
+                // Session completed during offline time
+                alert('Session complete!');
+                localStorage.removeItem('isRunning');
+                localStorage.removeItem('endTime');
+                isRunning = false;
+                timeLeft = initialTime;
+                updateTimer();
+            }
+        } else if (isPaused) {
+            const savedTimeLeft = localStorage.getItem('timeLeft');
+            timeLeft = savedTimeLeft ? parseInt(savedTimeLeft) : initialTime;
+            updateTimer();
+        } else {
             timeLeft = initialTime;
             updateTimer();
+        }
+    }
+
+    function setDuration() {
+        const radios = document.querySelectorAll('input[name="sessionType"]');
+        const selected = Array.from(radios).find(r => r.checked);
+        if (selected) {
+            initialTime = parseInt(selected.value);
+            if (!isRunning && !isPaused) {
+                timeLeft = initialTime;
+                updateTimer();
+            }
+            saveState();
         }
     }
 
@@ -60,7 +123,7 @@
         } else if (isPaused) {
             // Paused state: Show Resume and Stop
             controlsDiv.innerHTML = `
-                <button class="btn btn-success btn-lg ml-2" onclick="resumeTimer()"><i class="fas fa-play"></i> Resume</button>
+                <button class="btn btn-success btn-lg" onclick="resumeTimer()"><i class="fas fa-play"></i> Resume</button>
                 <button class="btn btn-danger btn-lg ml-2" onclick="stopTimer()"><i class="fas fa-stop"></i> Stop</button>
             `;
         }
@@ -79,9 +142,15 @@
     }
 
     function startTimer() {
-        if (!timerId && initialTime > 0) { // Prevent start if no duration selected
+        if (timeLeft <= 0) {
+            alert('Please select a session duration first!');
+            return;
+        }
+        if (!timerId) {
             isRunning = true;
             isPaused = false;
+            const endTime = Date.now() + timeLeft * 1000;
+            localStorage.setItem('endTime', endTime.toString());
             timerId = setInterval(() => {
                 timeLeft--;
                 updateTimer();
@@ -91,12 +160,14 @@
                     isRunning = false;
                     isPaused = false;
                     alert('Session complete!');
+                    localStorage.removeItem('endTime');
+                    localStorage.removeItem('isRunning');
+                    localStorage.removeItem('isPaused');
                     updateControls();
                 }
             }, 1000);
+            saveState();
             updateControls();
-        } else if (initialTime === 0) {
-            alert('Please select a session duration first!');
         }
     }
 
@@ -106,6 +177,7 @@
             timerId = null;
             isRunning = false;
             isPaused = true;
+            saveState();
             updateControls();
         }
     }
@@ -122,24 +194,18 @@
         isRunning = false;
         isPaused = false;
         updateControls(); // This will reset timeLeft to initial
-    }
-
-    function setDuration() {
-        const radios = document.querySelectorAll('input[name="sessionType"]');
-        const selected = Array.from(radios).find(r => r.checked);
-        if (selected) {
-            initialTime = parseInt(selected.value);
-            if (!isRunning && !isPaused) {
-                timeLeft = initialTime;
-                updateTimer();
-            }
-        }
+        saveState();
     }
 
     // Initial setup: Use DOMContentLoaded to ensure elements exist
     document.addEventListener('DOMContentLoaded', function() {
-        setDuration(); // Sets to 0 initially since no default value
-        updateTimer();
+        loadState();
         updateControls();
+
+        // Add event listener for duration change
+        const radios = document.querySelectorAll('input[name="sessionType"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', setDuration);
+        });
     });
 </script>

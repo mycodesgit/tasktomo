@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - CodingNepal</title>
+    <title>@yield('title')</title>
 
     <link rel="stylesheet" href="{{ asset('template/plugins/fontawesome-free-V6/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/css/bootstrap.min.css') }}">
@@ -27,26 +27,7 @@
                 <a class="logo">TaskTomo</a>
             </div>
 
-            <nav class="dashboard-nav">
-                <div class="dashboard-nav-section">
-                    <a href="#" class="dashboard-nav-item active" data-view="dashboard">
-                        <i class="nav-icon fas fa-th"></i>
-                        <span class="nav-label">Dashboard</span>
-                    </a>
-                    <a href="#" class="dashboard-nav-item" data-view="tasks">
-                        <sipan class="nav-icon fas fa-tasks"></sipan>
-                        <span class="nav-label">Daily Task</span>
-                    </a>
-                    <a href="#" class="dashboard-nav-item" data-view="reports">
-                        <i class="nav-icon fas fa-chart-simple"></i>
-                        <span class="nav-label">Reports</span>
-                    </a>
-                    <a href="#" class="dashboard-nav-item" data-view="users">
-                        <i class="nav-icon fas fa-users"></i>
-                        <span class="nav-label">Users</span>
-                    </a>
-                </div>
-            </nav>
+            @include('control.sidebar')
 
             <!-- Back to Site Button -->
             <div class="sidebar-footer">

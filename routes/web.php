@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DailyTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,10 @@ Route::group(['middleware'=>['guest']],function(){
 
 //Middleware
 Route::group(['middleware'=>['login_auth']],function(){
-    Route::get('/dashboard',[DashboardController::class,'index'])->name('index.dashboard');
+    Route::get('/view/all',[DashboardController::class,'index'])->name('index.dashboard');
     Route::post('/logout',[DashboardController::class,'logout'])->name('logout');
-
+    
+    Route::prefix('daily/task')->group(function () {
+        Route::get('/list/current/sem', [DailyTaskController::class, 'index'])->name('index.task');
+    });
 });

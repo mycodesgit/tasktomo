@@ -1,11 +1,13 @@
 @extends('layouts.master')
 
+@section('title')
+    MIS TaskTomo - Dashboard
+@endsection
+
 @section('body')
     <div class="dashboard-content">
-        <!-- Overview View -->
-        <div class="dashboard-view active" id="overview">
-            
-
+        <!-- Dashboard View -->
+        <div class="dashboard-view active" id="dashboard">
             <!-- Charts -->
             <div class="chart-grid">
                 <div class="chart-card">
@@ -216,28 +218,9 @@
             </div>
         </div>
 
-        <!-- Projects View -->
-        <div class="dashboard-view" id="projects">
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <span class="material-symbols-rounded">folder</span>
-                </div>
-                <h3 class="empty-state-title">Projects</h3>
-                <p class="empty-state-description">Manage your projects here. Create new projects, track
-                    progress, and collaborate with your team.</p>
-            </div>
-        </div>
-
         <!-- Tasks View -->
         <div class="dashboard-view" id="tasks">
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <span class="material-symbols-rounded">checklist</span>
-                </div>
-                <h3 class="empty-state-title">Tasks</h3>
-                <p class="empty-state-description">View and manage all your tasks. Create new tasks, set
-                    priorities, and track completion status.</p>
-            </div>
+                @include('task.daily')
         </div>
 
         <!-- Reports View -->
