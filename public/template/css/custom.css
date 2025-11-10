@@ -190,3 +190,8 @@
 #musicNext[style*="display: none"] {
     opacity: 0;
 }
+
+.text-lessgreen {
+    --bs-text-opacity: 1;
+    color: #9cefc9 !important;
+}

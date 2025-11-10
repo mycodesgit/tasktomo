@@ -60,7 +60,7 @@
 
             // Format tooltip text dynamically (default to Rest)
             const weekday = currentDate.toLocaleDateString("en-US", { weekday: "long" });
-            const monthFull = currentDate.toLocaleDateString("en-US", { month: "long" });
+            const monthFull = currentDate.toLocaleDateString("en-US", { month: "short" });
             const dayOfMonth = currentDate.getDate(); // Renamed to avoid 'day' conflict
             const yearFull = currentDate.getFullYear();
 
@@ -86,23 +86,33 @@
     }
 
     // Function to update dots based on fetched data (script-only color change)
-    function updateChartWithData(productiveDates) {
-        //console.log('Productive dates from server:', productiveDates); // Debug: Check fetched dates
+    function updateChartWithData(activitySummary) {
+        //console.log('Activity summary from server:', activitySummary); // Debug: Check fetched data
         let updatedCount = 0;
         allDots.forEach(({ dot, dateKey }) => {
-            if (productiveDates.includes(dateKey)) {
-                // Mark as Productive - force inline style to override CSS
-                dot.style.backgroundColor = '#28a745'; // Green for Productive (Bootstrap success)
+            const dayData = activitySummary.find(item => item.date === dateKey);
+            if (dayData) {
+                const { count } = dayData;
+                let status, color, tooltipText;
+                if (count < 4) {
+                    status = 'Less Productive';
+                    color = '#9cefc9'; // Light green for Less Productive
+                } else {
+                    status = 'More Productive';
+                    color = '#28a745'; // Dark green for More Productive
+                }
+                // Mark with color - force inline style to override CSS
+                dot.style.backgroundColor = color;
                 dot.style.border = 'none'; // Ensure no border interference
 
-                // Update tooltip text
+                // Update tooltip text with count
                 const tooltip = dot.querySelector('.tooltip');
                 const dateInfo = tooltip.innerHTML.split('<br>')[1] || '';
-                tooltip.innerHTML = `<strong>Productive</strong><br>${dateInfo}`;
+                tooltip.innerHTML = `<strong>${status} (${count} task${count !== 1 ? 's' : ''})</strong><br>${dateInfo}`;
                 updatedCount++;
             }
         });
-        //console.log(`Updated ${updatedCount} dots to productive.`); // Debug: Check if matches occurred
+        //console.log(`Updated ${updatedCount} dots with activity data.`); // Debug: Check if matches occurred
     }
 
     // Fetch data and update chart on DOM ready
@@ -113,10 +123,10 @@
             type: "GET",
             dataType: "json",
             success: function(response) {
-                //console.log('Full AJAX response:', response); // Debug: Full response
+                console.log('Full AJAX response:', response); // Debug: Full response
                 if (response.success) {
-                    const productiveDates = response.dates || []; // Fallback to empty array
-                    updateChartWithData(productiveDates);
+                    const activitySummary = response.summary || []; // Array of {date: 'YYYY-MM-DD', count: N}
+                    updateChartWithData(activitySummary);
                 } else {
                     console.error('Failed to fetch activity data:', response.message);
                 }

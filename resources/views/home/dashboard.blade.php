@@ -50,7 +50,8 @@
                         <h2 class="text-left">Daily Work Pulse</h2>
                         <p class="chart-card-subtitle">
                             <i class="fas fa-circle text-gray"></i> Rest &nbsp;&nbsp;&nbsp;
-                            <i class="fas fa-circle text-success"></i> Productive 
+                            <i class="fas fa-circle text-lessgreen"></i> Less Productive  &nbsp;&nbsp;&nbsp;
+                            <i class="fas fa-circle text-success"></i> More Productive 
                         </p>
                     </div>
                     <div class="chart-container" id="activityChart">
