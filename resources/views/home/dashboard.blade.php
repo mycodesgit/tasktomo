@@ -229,7 +229,7 @@
             @include('reports.list')
         </div>
 
-        <!-- Settings View -->
+        <!-- Users View -->
         <div class="dashboard-view" id="users">
             @include('users.listuser')
         </div>
