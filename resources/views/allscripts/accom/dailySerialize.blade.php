@@ -16,7 +16,7 @@
                 success: function(response) {
                     if(response.success) {
                         toastr.success(response.message);
-                        console.log(response);
+                        //console.log(response);
                         $(document).trigger('dailyAdded');
                         $('#addDailytask')[0].reset();
                         $('.select2, .select2bs4').val('').trigger('change');

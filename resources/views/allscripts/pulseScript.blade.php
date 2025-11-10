@@ -1,3 +1,4 @@
+{{-- allscripts/pulseScript.blade.php --}}
 <script>
     var activityDataRoute = "{{ route('fetch.activity.dates') }}"; // Define route below
 </script>
@@ -22,8 +23,8 @@
     let lastMonth = -1;
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // Array to store all generated dots for later updating
-    const allDots = [];
+    // Make allDots global for access from refresh
+    window.allDots = [];
 
     for (let week = 0; week < weeks; week++) {
         const weekCol = document.createElement("div");
@@ -70,7 +71,7 @@
 
             dot.appendChild(tooltip);
             weekCol.appendChild(dot);
-            allDots.push({ dot, dateKey }); // Store for later update
+            window.allDots.push({ dot, dateKey }); // Store for later update
         }
 
         weeksWrapper.appendChild(weekCol);
@@ -85,11 +86,11 @@
         }, 100);
     }
 
-    // Function to update dots based on fetched data (script-only color change)
-    function updateChartWithData(activitySummary) {
+    // Function to update dots based on fetched data (script-only color change) - Make global
+    window.updateChartWithData = function(activitySummary) {
         //console.log('Activity summary from server:', activitySummary); // Debug: Check fetched data
         let updatedCount = 0;
-        allDots.forEach(({ dot, dateKey }) => {
+        window.allDots.forEach(({ dot, dateKey }) => {
             const dayData = activitySummary.find(item => item.date === dateKey);
             if (dayData) {
                 const { count } = dayData;
@@ -113,20 +114,19 @@
             }
         });
         //console.log(`Updated ${updatedCount} dots with activity data.`); // Debug: Check if matches occurred
-    }
+    };
 
-    // Fetch data and update chart on DOM ready
-    $(document).ready(function() {
-        //console.log('Fetching activity data from:', activityDataRoute); // Debug: Confirm route
+    // Function to refresh chart data - Make global
+    window.refreshActivityChart = function() {
         $.ajax({
             url: activityDataRoute,
             type: "GET",
             dataType: "json",
             success: function(response) {
-                console.log('Full AJAX response:', response); // Debug: Full response
+                //console.log('Full AJAX response:', response); // Debug: Full response
                 if (response.success) {
                     const activitySummary = response.summary || []; // Array of {date: 'YYYY-MM-DD', count: N}
-                    updateChartWithData(activitySummary);
+                    window.updateChartWithData(activitySummary);
                 } else {
                     console.error('Failed to fetch activity data:', response.message);
                 }
@@ -135,5 +135,15 @@
                 console.error('AJAX Error:', status, error, xhr.responseText); // Debug: Network errors
             }
         });
+    };
+
+    // Listen for 'dailyAdded' event to refresh chart
+    $(document).on('dailyAdded', function() {
+        window.refreshActivityChart();
+    });
+
+    // Initial fetch on DOM ready
+    $(document).ready(function() {
+        window.refreshActivityChart();
     });
 </script>
