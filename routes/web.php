@@ -32,7 +32,11 @@ Route::group(['middleware'=>['login_auth']],function(){
     Route::get('/view/all',[DashboardController::class,'index'])->name('index.dashboard');
     Route::post('/logout',[DashboardController::class,'logout'])->name('logout');
     
+    Route::get('/activity/dates', [DashboardController::class, 'fetchActivityDates'])->name('fetch.activity.dates');
+    
     Route::prefix('daily/task')->group(function () {
-        Route::get('/list/current/sem', [DailyTaskController::class, 'index'])->name('index.task');
+        Route::get('/list/view', [DailyTaskController::class, 'index'])->name('index.task');
+        Route::post('/list/add', [DailyTaskController::class, 'store'])->name('store.task');
+        Route::get('/list/fetch', [DailyTaskController::class, 'show'])->name('fetch.tasks');
     });
 });
