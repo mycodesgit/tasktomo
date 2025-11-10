@@ -147,7 +147,7 @@ function updatePageTitle(viewId) {
         dashboard: "Dashboard",
         tasks: "Daily Task",
         reports: "Reports",
-        settings: "Settings",
+        users: "Users",
     };
 
     if (dashboardTitle) {

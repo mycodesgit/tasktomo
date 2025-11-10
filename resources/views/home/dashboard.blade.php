@@ -230,15 +230,8 @@
         </div>
 
         <!-- Settings View -->
-        <div class="dashboard-view" id="settings">
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <span class="material-symbols-rounded">settings</span>
-                </div>
-                <h3 class="empty-state-title">Settings</h3>
-                <p class="empty-state-description">Configure your dashboard preferences, manage team members,
-                    and customize your workspace.</p>
-            </div>
+        <div class="dashboard-view" id="users">
+            @include('users.listuser')
         </div>
     </div>
 @endsection
