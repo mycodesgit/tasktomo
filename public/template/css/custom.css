@@ -1,0 +1,192 @@
+.timer-display { 
+    font-size: 5rem; 
+    font-weight: 900; 
+    margin-bottom: 10px; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+}
+
+.day-dot {
+    width: 11px;
+    height: 11px;
+    background-color: #9b9b9b;
+    border-radius: 15px;
+    margin: 2px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.day-dot:hover {
+    background-color: #e1443c;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #000;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.40s ease-in-out;
+    z-index: 50;
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+}
+
+.day-dot:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Container */
+.chart-container {
+    position: relative;
+    height: 210px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+}
+
+/* Weeks layout */
+.weeks-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+/* Each week column */
+.week-column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* Month labels row */
+.month-labels {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #9b9b9b;
+    flex-shrink: 0;
+    margin-bottom: 20px;
+    font-weight: bolder;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px; /* Slightly smaller fixed height to fit mobile */
+        overflow-x: auto; /* Keep horizontal scroll at bottom */
+        overflow-y: hidden; /* No vertical scroll */
+        padding: 5px; /* Reduce padding */
+        scrollbar-width: thin; /* Thin scrollbar for better mobile UX */
+    }
+
+    .weeks-wrapper {
+        gap: 1px; /* Tighter gaps between weeks */
+    }
+
+    .week-column {
+        gap: 1px; /* Tighter gaps between days in column */
+    }
+
+    .day-dot {
+        width: 7px; /* Smaller dots to reduce overall width */
+        height: 7px;
+        margin: 1px;
+        border-radius: 50%; /* Perfect circles for compactness */
+    }
+
+    .month-labels {
+        gap: 4px; /* Tighter month label gaps */
+        font-size: 10px; /* Smaller labels */
+        flex-wrap: nowrap; /* Keep in single row, scroll if needed */
+        overflow-x: auto; /* Allow horizontal scroll for labels if too wide */
+        padding-bottom: 5px; /* Space for label scrollbar */
+        margin-bottom: 10px;
+        justify-content: flex-start; /* Align left for scroll start */
+    }
+
+    /* Tooltip adjustments for smaller elements */
+    .tooltip {
+        font-size: 10px;
+        padding: 4px 6px;
+        bottom: 130%; /* Slight adjustment to avoid clipping */
+        white-space: normal; /* Allow wrap if text is long */
+        max-width: 100px;
+    }
+
+    /* Ensure chart-card fits screen */
+    .chart-card {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .chart-card-header h2 {
+        font-size: 1rem;
+    }
+
+    .chart-card-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.1;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 200px; /* Even smaller height for phones */
+        padding: 3px;
+    }
+
+    .day-dot {
+        width: 6px;
+        height: 6px;
+        margin: 0.5px;
+    }
+
+    .weeks-wrapper,
+    .week-column {
+        gap: 0.5px;
+    }
+
+    .month-labels {
+        gap: 2px;
+        font-size: 9px;
+    }
+
+    .tooltip {
+        font-size: 9px;
+        padding: 3px 5px;
+        max-width: 80px;
+    }
+}
+
+#musicNext {
+    transition: opacity 0.3s ease;
+}
+#musicNext[style*="display: none"] {
+    opacity: 0;
+}
