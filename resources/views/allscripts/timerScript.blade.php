@@ -51,7 +51,14 @@
                 return;
             } else {
                 // Session completed during offline time
-                alert('Session complete!');
+                Swal.fire({
+                    title: '⏰ Session Complete!',
+                    text: `Your timer has finished! Total time: ${initialTime / 60} minutes.`,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 4000,
+                    timerProgressBar: true,
+                });
                 localStorage.removeItem('isRunning');
                 localStorage.removeItem('endTime');
                 isRunning = false;
@@ -159,7 +166,14 @@
                     timerId = null;
                     isRunning = false;
                     isPaused = false;
-                    alert('Session complete!');
+                    Swal.fire({
+                        title: '⏰ Session Complete!',
+                        text: `Your timer has finished! Total time: ${initialTime / 60} minutes.`,
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        timer: 4000,
+                        timerProgressBar: true,
+                    });
                     localStorage.removeItem('endTime');
                     localStorage.removeItem('isRunning');
                     localStorage.removeItem('isPaused');

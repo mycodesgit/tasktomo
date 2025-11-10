@@ -32,7 +32,7 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             <label for="">Select Task Tag:</label>
-                            <select name="tasktag" id="" class="form-control form-control-sm">
+                            <select name="tasktag" id="" class="form-control form-control-sm select2bs4">
                                 <option value=""> --Select Tag-- </option>
                                 <option value="Development">Development</option>
                                 <option value="Database">Database</option>
@@ -56,7 +56,7 @@
     </div>
     <div class="chart-card">
         <div class="chart-card-header">
-            <h4 class="text-left" id="timeHeader">My Task this Month</h4>
+            <h4 class="text-left" id="timeHeader">My Task within this 15 days</h4>
         </div>
         <div class="">
             <div class="dashboard-table-header">

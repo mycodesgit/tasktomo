@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DailyTaskController;
+use App\Http\Controllers\ReportsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,5 +39,10 @@ Route::group(['middleware'=>['login_auth']],function(){
         Route::get('/list/view', [DailyTaskController::class, 'index'])->name('index.task');
         Route::post('/list/add', [DailyTaskController::class, 'store'])->name('store.task');
         Route::get('/list/fetch', [DailyTaskController::class, 'show'])->name('fetch.tasks');
+    });
+
+    Route::prefix('myreps')->group(function () {
+        Route::post('/reports/generate', [ReportsController::class, 'generateReports'])->name('generate.reports');
+        Route::get('/reports/pdf', [ReportsController::class, 'generateReports'])->name('reports.pdf');
     });
 });

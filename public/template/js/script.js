@@ -145,7 +145,7 @@ function switchView(viewId) {
 function updatePageTitle(viewId) {
     const titles = {
         dashboard: "Dashboard",
-        tasks: "Daily Tasks",
+        tasks: "Daily Task",
         reports: "Reports",
         settings: "Settings",
     };

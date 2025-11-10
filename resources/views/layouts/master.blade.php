@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
 
     <link rel="stylesheet" href="{{ asset('template/plugins/fontawesome-free-V6/css/all.min.css') }}">
@@ -22,6 +23,8 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('template/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('template/css/custom.css') }}" />
+    <!-- Logo  -->
+    <link rel="shortcut icon" type="" href="{{ asset('template/img/tasktomo-clock-logo.png') }}">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

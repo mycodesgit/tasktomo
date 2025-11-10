@@ -11,6 +11,7 @@ use App\Models\Daily;
 use App\Models\Option;
 
 use App\Http\Controllers\DailyTaskController;
+use App\Http\Controllers\ReportsController;
 
 class DashboardController extends Controller
 {
@@ -24,27 +25,27 @@ class DashboardController extends Controller
     }
 
     public function fetchActivityDates()
-{
-    $userId = Auth::id();
-    $currentYear = Carbon::now()->year;
+    {
+        $userId = Auth::id();
+        $currentYear = Carbon::now()->year;
 
-    // Fetch unique dates (YYYY-MM-DD) where user has accomplishments this year
-    $summary = Daily::select(
-            DB::raw('DATE(created_at) as date'),
-            DB::raw('COUNT(*) as count')
-        )
-        ->where('user_id', $userId)
-        ->whereYear('created_at', $currentYear)
-        ->groupBy(DB::raw('DATE(created_at)'))
-        ->orderBy('date')
-        ->get()
-        ->toArray();
+        // Fetch unique dates (YYYY-MM-DD) where user has accomplishments this year
+        $summary = Daily::select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->where('user_id', $userId)
+            ->whereYear('created_at', $currentYear)
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('date')
+            ->get()
+            ->toArray();
 
-    return response()->json([
-        'success' => true,
-        'summary' => $summary // e.g., ['2025-11-10', '2025-11-05']
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'summary' => $summary // e.g., ['2025-11-10', '2025-11-05']
+        ]);
+    }
 
     public function logout(Request $request)
     {

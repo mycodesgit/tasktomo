@@ -221,19 +221,12 @@
 
         <!-- Tasks View -->
         <div class="dashboard-view" id="tasks">
-                @include('task.daily')
+            @include('task.daily')
         </div>
 
         <!-- Reports View -->
         <div class="dashboard-view" id="reports">
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <span class="material-symbols-rounded">bar_chart</span>
-                </div>
-                <h3 class="empty-state-title">Reports</h3>
-                <p class="empty-state-description">Generate detailed reports and analytics. View project
-                    performance, team productivity, and time tracking data.</p>
-            </div>
+            @include('reports.list')
         </div>
 
         <!-- Settings View -->
