@@ -1,15 +1,37 @@
 <script>
     let timeLeft = 0; // Initial: 00:00
     let initialTime = 0;
+    let breakDuration = 300; // 5 minutes in seconds
     let timerId;
     let isRunning = false;
     let isPaused = false;
+    let isBreak = false;
+
+    function playBeep() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 800; // Hz
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+        } catch (e) {
+            // Fallback: console beep or ignore if AudioContext not supported
+            console.log('\u{1f514}'); // Bell emoji in console
+        }
+    }
 
     function saveState() {
         localStorage.setItem('initialTime', initialTime.toString());
         localStorage.setItem('timeLeft', timeLeft.toString());
         localStorage.setItem('isRunning', isRunning.toString());
         localStorage.setItem('isPaused', isPaused.toString());
+        localStorage.setItem('isBreak', isBreak.toString());
         if (isRunning) {
             const endTime = Date.now() + timeLeft * 1000;
             localStorage.setItem('endTime', endTime.toString());
@@ -26,11 +48,13 @@
 
         const savedIsRunning = localStorage.getItem('isRunning') === 'true';
         const savedIsPaused = localStorage.getItem('isPaused') === 'true';
+        const savedIsBreak = localStorage.getItem('isBreak') === 'true';
         const endTimeStr = localStorage.getItem('endTime');
         const endTime = endTimeStr ? parseInt(endTimeStr) : null;
 
         isRunning = savedIsRunning;
         isPaused = savedIsPaused;
+        isBreak = savedIsBreak;
 
         // Set the radio button based on saved initialTime
         const radios = document.querySelectorAll('input[name="sessionType"]');
@@ -47,21 +71,42 @@
             updateTimer();
             if (timeLeft > 0) {
                 // Resume the running timer
-                startTimer();
+                if (isBreak) {
+                    startBreakTimer();
+                } else {
+                    startTimer();
+                }
                 return;
             } else {
                 // Session completed during offline time
-                Swal.fire({
-                    title: '⏰ Session Complete!',
-                    text: `Your timer has finished! Total time: ${initialTime / 60} minutes.`,
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-                localStorage.removeItem('isRunning');
-                localStorage.removeItem('endTime');
-                isRunning = false;
+                if (isBreak) {
+                    Swal.fire({
+                        title: '⏰ Break Complete!',
+                        text: 'Time to start your next session!',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        timer: 4000,
+                        timerProgressBar: true,
+                    });
+                    localStorage.removeItem('isRunning');
+                    localStorage.removeItem('endTime');
+                    localStorage.removeItem('isBreak');
+                    isRunning = false;
+                    isBreak = false;
+                } else {
+                    playBeep();
+                    Swal.fire({
+                        title: '⏰ Session Complete!',
+                        text: `Your timer has finished! Total time: ${initialTime / 60} minutes.`,
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        timer: 4000,
+                        timerProgressBar: true,
+                    });
+                    localStorage.removeItem('isRunning');
+                    localStorage.removeItem('endTime');
+                    isRunning = false;
+                }
                 timeLeft = initialTime;
                 updateTimer();
             }
@@ -101,7 +146,9 @@
         const headerElement = document.getElementById('timeHeader');
         if (!headerElement) return;
 
-        if (isRunning) {
+        if (isBreak) {
+            headerElement.textContent = 'Break Time';
+        } else if (isRunning) {
             headerElement.textContent = 'Working Time';
         } else if (isPaused)  {
             headerElement.textContent = 'Paused Time';
@@ -142,6 +189,11 @@
         if (focusLabel) {
             if (isRunning || isPaused) {
                 focusLabel.style.display = 'block';
+                if (isBreak) {
+                    focusLabel.textContent = 'Break Time Left:';
+                } else {
+                    focusLabel.textContent = 'Focus Time Left:';
+                }
             } else {
                 focusLabel.style.display = 'none';
             }
@@ -150,7 +202,14 @@
 
     function startTimer() {
         if (timeLeft <= 0) {
-            alert('Please select a session duration first!');
+            Swal.fire({
+                title: 'Note!',
+                text: `Please select a session duration first!`,
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                timer: 6000,
+                timerProgressBar: true,
+            });
             return;
         }
         if (!timerId) {
@@ -166,17 +225,57 @@
                     timerId = null;
                     isRunning = false;
                     isPaused = false;
+                    playBeep();
                     Swal.fire({
                         title: '⏰ Session Complete!',
-                        text: `Your timer has finished! Total time: ${initialTime / 60} minutes.`,
+                        text: `Great job! Total time: ${initialTime / 60} minutes. Taking a 5-minute break now.`,
                         icon: 'success',
                         confirmButtonText: 'OK',
                         timer: 4000,
                         timerProgressBar: true,
                     });
+                    // Start break after work session
+                    isBreak = true;
+                    timeLeft = breakDuration;
+                    updateTimer();
+                    startBreakTimer();
+                    saveState();
+                }
+            }, 1000);
+            saveState();
+            updateControls();
+        }
+    }
+
+    function startBreakTimer() {
+        if (!timerId && timeLeft > 0) {
+            isRunning = true;
+            isPaused = false;
+            const endTime = Date.now() + timeLeft * 1000;
+            localStorage.setItem('endTime', endTime.toString());
+            timerId = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    timerId = null;
+                    isRunning = false;
+                    isPaused = false;
+                    isBreak = false;
+                    Swal.fire({
+                        title: '⏰ Break Complete!',
+                        text: 'Time to start your next session!',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        timer: 4000,
+                        timerProgressBar: true,
+                    });
+                    timeLeft = initialTime;
+                    updateTimer();
                     localStorage.removeItem('endTime');
                     localStorage.removeItem('isRunning');
                     localStorage.removeItem('isPaused');
+                    localStorage.removeItem('isBreak');
                     updateControls();
                 }
             }, 1000);
@@ -197,7 +296,11 @@
     }
 
     function resumeTimer() {
-        startTimer(); // Reuse start logic to resume from paused time
+        if (isBreak) {
+            startBreakTimer();
+        } else {
+            startTimer();
+        }
     }
 
     function stopTimer() {
@@ -207,6 +310,7 @@
         }
         isRunning = false;
         isPaused = false;
+        isBreak = false;
         updateControls(); // This will reset timeLeft to initial
         saveState();
     }
