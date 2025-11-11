@@ -51,7 +51,7 @@
                         <p class="chart-card-subtitle">
                             <i class="fas fa-circle text-gray"></i> Rest &nbsp;&nbsp;&nbsp;
                             <i class="fas fa-circle text-lessgreen"></i> Less Productive  &nbsp;&nbsp;&nbsp;
-                            <i class="fas fa-circle text-success"></i> More Productive 
+                            <i class="fas fa-circle text-moregreen"></i> More Productive 
                         </p>
                     </div>
                     <div class="chart-container" id="activityChart">

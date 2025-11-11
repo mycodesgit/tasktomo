@@ -193,5 +193,10 @@
 
 .text-lessgreen {
     --bs-text-opacity: 1;
-    color: #9cefc9 !important;
+    color: #57ad86 !important;
+}
+
+.text-moregreen {
+    --bs-text-opacity: 1;
+    color: #28a745 !important;
 }

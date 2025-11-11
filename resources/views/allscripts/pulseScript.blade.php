@@ -97,7 +97,7 @@
                 let status, color, tooltipText;
                 if (count < 4) {
                     status = 'Less Productive';
-                    color = '#9cefc9'; // Light green for Less Productive
+                    color = '#57ad86'; // Light green for Less Productive
                 } else {
                     status = 'More Productive';
                     color = '#28a745'; // Dark green for More Productive
